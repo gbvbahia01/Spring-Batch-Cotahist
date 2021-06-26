@@ -1,0 +1,39 @@
+info:
+  app:
+    name: Spring Batch COTAHIST
+    version: 1.0.0
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.15.177:5432/batch
+    username: pi
+    password: bvb123
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    database: POSTGRESQL
+    show-sql: false
+    open-in-view: false
+    #Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+
+batch:
+  jdbc:
+    driver: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.15.177:5432/batch
+    user: pi
+    password: bvb123
+    validationQuery: SELECT 1
+    testOnBorrow: true
+    
+app:
+  line:
+    chunk: 1 # number of items to proccess per cycle
+    max-concurrent-threads: 1
+    query.insert: INSERT INTO cotahist_line (id, cod_neg, bdi, dt_preg, pre_ult, cod_isi, dat_ven, dismes, especi, fat_cot, ind_opc, mod_ref, nom_res, prazo_t, pre_abe, pre_exe, pre_max, pre_med, pre_min, pre_ofc, pre_ofv, pto_exe, qua_tot, tip_reg, tot_neg, tp_merc, vol_tot, header_id) VALUES(nextval('seq_cotahist_line'), :codNeg, :bdi, :dataPregao, :preUlt, :codIsi, :datVen, :dismes, :especi, :fatCot, :indOpc, :modref, :nomRes, :prazot, :preAbe, :preExe, :preMax, :preMed, :preMin, :preOfc, :preOfv, :ptoExe, :quaTot, :tipoRegistro, :totNeg, :tpMerc, :volTot, null)
+  
