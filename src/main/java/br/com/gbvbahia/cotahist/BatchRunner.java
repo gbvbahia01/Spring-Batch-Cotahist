@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,11 +40,20 @@ public class BatchRunner implements CommandLineRunner{
       List<String> files = getFiles(args);
       for (String file : files) {
          
-         Long trailerToSkip = Files.lines(Paths.get(file)).count();
-         log.info("Trailer:{}", trailerToSkip);
+         Long lines = Files.lines(Paths.get(file)).count();
+         String header = StringUtils.trimToEmpty(Files.lines(Paths.get(file)).findFirst().get());
+         String trailer = StringUtils.trimToEmpty(Files.lines(Paths.get(file)).skip(lines - 1).findFirst().get());
          
-         if ("A".equals("B"))
-            cotahistService.startImportCotahistFile(file, trailerToSkip);
+         log.info("Lines:{} Header:{} Trailer:{}", lines, header, trailer);
+         
+         JobParameters jobParameters = new JobParametersBuilder()
+                                          .addString("pathToFile", file)
+                                          .addString("header", header)
+                                          .addString("trailer", trailer)
+                                          .addLong("lines", lines)
+                                          .toJobParameters();
+         
+         cotahistService.startImportCotahistFile(jobParameters);
       }
       
       sw.stop();
@@ -59,4 +70,5 @@ public class BatchRunner implements CommandLineRunner{
       }
       return files;
   }
+
 }

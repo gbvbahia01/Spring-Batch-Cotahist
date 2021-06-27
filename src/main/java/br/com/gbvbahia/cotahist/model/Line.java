@@ -198,6 +198,6 @@ public class Line {
    /**
     * It is NOT at file, is for helping to FK with header file
     */
-   private long headerId;
+   private Long headerId;
 
 }

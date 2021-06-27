@@ -8,7 +8,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -16,7 +16,6 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
@@ -27,6 +26,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
+import br.com.gbvbahia.cotahist.batch.HeaderItemReader.HeaderItemReaderBuilder;
+import br.com.gbvbahia.cotahist.batch.HeaderItemWriter.HeaderItemWriterBuilder;
+import br.com.gbvbahia.cotahist.batch.LineSetHeaderIdProcessor.LineSetHeaderIdProcessorBuilder;
+import br.com.gbvbahia.cotahist.model.Header;
 import br.com.gbvbahia.cotahist.model.Line;
 
 @Configuration
@@ -47,16 +50,29 @@ public class CotahistCfg {
    private NotificationListener listener;
    
    @Bean
-   public Job cotahistJob(Step stepImportCotahist){
+   public Job cotahistJob(Step stepImportHeader,
+                          Step stepImportCotahist){
        return jobsFactory.get("cotahistJob")
                .listener(listener)
-               .start(stepImportCotahist)
+               .start(stepImportHeader)
+               .next(stepImportCotahist)
                .build();
    }
    
-   public Step stepImportHeader(@Value("#{jobParameters['pathToFile']}") String pathToFile) {
+   @Bean
+   public Step stepImportHeader(HeaderItemWriter headerItemWriter) {
       
-     return null;
+      SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = new SimpleAsyncTaskExecutor();
+      simpleAsyncTaskExecutor.setConcurrencyLimit(1);
+      
+      return stepsFactory.get("stepImportHeader").
+            <Header,Header>chunk(1)
+            .reader(headerItemReader(STRING_OVERRIDDEN_BY_EXPRESSION))
+            .writer(headerItemWriter)
+            .taskExecutor(simpleAsyncTaskExecutor)
+            .listener(promotionListener())
+            .startLimit(1)
+            .build();
    }
    
    @Bean
@@ -70,6 +86,7 @@ public class CotahistCfg {
        return stepsFactory.get("stepImportCotahist").
                <Line,Line>chunk(chunk)
                .reader(lineItemReader(STRING_OVERRIDDEN_BY_EXPRESSION, LONG_OVERRIDDEN_BY_EXPRESSION))
+               .processor(new LineSetHeaderIdProcessorBuilder().build())
                .writer(lineItemWriter)
                .taskExecutor(simpleAsyncTaskExecutor)
                .build();
@@ -77,17 +94,37 @@ public class CotahistCfg {
    
    @Bean
    @StepScope
+   public HeaderItemReader headerItemReader(@Value("#{jobParameters['header']}") String header) {
+      
+      HeaderItemReader reader = new HeaderItemReaderBuilder().header(header).build();
+       return reader;
+   }
+   
+   @Bean
+   @StepScope
    public FlatFileItemReader<Line> lineItemReader(@Value("#{jobParameters['pathToFile']}") String pathToFile,
-                                                  @Value("#{jobParameters['trailerToSkip']}") Long trailerToSkip) {
+                                                  @Value("#{jobParameters['lines']}") Long lines) {
       
       FlatFileItemReader<Line> reader = new FlatFileItemReaderBuilder<Line>()
       .name("lineItemReader")
       .resource(new FileSystemResource(pathToFile))
-      .lineMapper(getLineMapper())
+      .lineMapper(getLineMapper(lines.intValue()))
       .linesToSkip(HEADER_LINE)
       .build();
       
        return reader;
+   }
+   
+   @Bean
+   @StepScope
+   public HeaderItemWriter headerItemWriter(@Autowired DataSource dataSource,
+                                            @Value("${app.header.query.insert}") String sql) {
+      
+      HeaderItemWriter writer = new HeaderItemWriterBuilder()
+                                    .dataSource(dataSource)
+                                    .insertQuery(sql)
+                                    .build();
+      return writer;
    }
    
    @Bean
@@ -99,8 +136,16 @@ public class CotahistCfg {
                .build();
    }
    
-   private LineMapper<Line> getLineMapper() {
-      DefaultLineMapper<Line> mapper = new DefaultLineMapper<>();
+   public ExecutionContextPromotionListener promotionListener() {
+     ExecutionContextPromotionListener listener = new ExecutionContextPromotionListener();
+
+     listener.setKeys(new String[] {"headerId"});
+
+     return listener;
+   }
+   
+   private LineMapper<Line> getLineMapper(Integer trailerLine) {
+      SkipLineDefaultLineMapper<Line> mapper = new SkipLineDefaultLineMapper<>(trailerLine);
       mapper.setLineTokenizer(getLineTokenizer());
       BeanWrapperFieldSetMapper<Line> fieldSetMapper = new BeanWrapperFieldSetMapper<Line>();
       fieldSetMapper.setTargetType(Line.class);
