@@ -47,7 +47,7 @@ public class BatchRunner implements CommandLineRunner{
          log.info("Lines:{} Header:{} Trailer:{}", lines, header, trailer);
          
          JobParameters jobParameters = new JobParametersBuilder()
-                                          .addString("pathToFile", file)
+                                          .addString("pathToFile", file, false)
                                           .addString("header", header)
                                           .addString("trailer", trailer)
                                           .addLong("lines", lines)
