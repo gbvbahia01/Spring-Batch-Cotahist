@@ -19,12 +19,13 @@ public class CotahistService {
 
    private final Job cotahistJob;
    
-   public JobExecution startImportCotahistFile(String pathToFile) throws Exception {
+   public JobExecution startImportCotahistFile(String pathToFile, Long trailerToSkip) throws Exception {
       
       log.info("Receive request to start cotahistJob to file: {}", pathToFile);
       
       JobParameters jobParameters= new JobParametersBuilder()
             .addString("pathToFile", pathToFile)
+            .addLong("trailerToSkip", trailerToSkip)
             .toJobParameters();
       
       JobExecution execution = jobLauncher.run(cotahistJob, jobParameters);

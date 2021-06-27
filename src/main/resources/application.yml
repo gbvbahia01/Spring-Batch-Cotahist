@@ -21,6 +21,11 @@ spring:
       hibernate:
         temp:
           use_jdbc_metadata_defaults: false
+  batch:
+    initialize-schema: ALWAYS
+    job:
+      enabled: false
+
 
 batch:
   jdbc:

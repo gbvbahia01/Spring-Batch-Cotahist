@@ -33,7 +33,9 @@ import br.com.gbvbahia.cotahist.model.Line;
 @EnableBatchProcessing
 public class CotahistCfg {
 
-   private static final String OVERRIDDEN_BY_EXPRESSION = null;
+   private static final String STRING_OVERRIDDEN_BY_EXPRESSION = null;
+   private static final Long LONG_OVERRIDDEN_BY_EXPRESSION = null;
+   private static final Integer HEADER_LINE = 1;
    
    @Autowired
    private JobBuilderFactory jobsFactory;
@@ -43,27 +45,31 @@ public class CotahistCfg {
    
    @Autowired
    private NotificationListener listener;
-
+   
    @Bean
    public Job cotahistJob(Step stepImportCotahist){
        return jobsFactory.get("cotahistJob")
-               .incrementer(new RunIdIncrementer())
                .listener(listener)
                .start(stepImportCotahist)
                .build();
    }
    
+   public Step stepImportHeader(@Value("#{jobParameters['pathToFile']}") String pathToFile) {
+      
+     return null;
+   }
+   
    @Bean
    public Step stepImportCotahist(JdbcBatchItemWriter<Line> lineItemWriter,
-                     @Value("${app.line.chunk}") Integer chunk,
-                     @Value("${app.line.max-concurrent-threads}") Integer maxConcurrentThreads){
+                                  @Value("${app.line.chunk}") Integer chunk,
+                                  @Value("${app.line.max-concurrent-threads}") Integer maxConcurrentThreads) {
       
       SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = new SimpleAsyncTaskExecutor();
       simpleAsyncTaskExecutor.setConcurrencyLimit(maxConcurrentThreads);
       
-       return stepsFactory.get("step1").
+       return stepsFactory.get("stepImportCotahist").
                <Line,Line>chunk(chunk)
-               .reader(lineItemReader(OVERRIDDEN_BY_EXPRESSION))
+               .reader(lineItemReader(STRING_OVERRIDDEN_BY_EXPRESSION, LONG_OVERRIDDEN_BY_EXPRESSION))
                .writer(lineItemWriter)
                .taskExecutor(simpleAsyncTaskExecutor)
                .build();
@@ -71,19 +77,19 @@ public class CotahistCfg {
    
    @Bean
    @StepScope
-   public FlatFileItemReader<Line> lineItemReader(@Value("#{jobParameters['pathToFile']}") String pathToFile) {
+   public FlatFileItemReader<Line> lineItemReader(@Value("#{jobParameters['pathToFile']}") String pathToFile,
+                                                  @Value("#{jobParameters['trailerToSkip']}") Long trailerToSkip) {
       
-      FlatFileItemReader<Line>reader = new FlatFileItemReaderBuilder<Line>()
+      FlatFileItemReader<Line> reader = new FlatFileItemReaderBuilder<Line>()
       .name("lineItemReader")
       .resource(new FileSystemResource(pathToFile))
       .lineMapper(getLineMapper())
+      .linesToSkip(HEADER_LINE)
       .build();
       
-      reader.setLinesToSkip(1);
-      
        return reader;
-                
    }
+   
    @Bean
    public JdbcBatchItemWriter<Line> lineItemWriter(final DataSource dataSource, @Value("${app.line.query.insert}") String sql) {
        return new JdbcBatchItemWriterBuilder<Line>()

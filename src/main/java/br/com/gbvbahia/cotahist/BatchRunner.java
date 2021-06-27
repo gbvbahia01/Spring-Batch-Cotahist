@@ -1,5 +1,7 @@
 package br.com.gbvbahia.cotahist;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class BatchRunner implements CommandLineRunner{
 
    private final CotahistService cotahistService;
    
-   /*
+   /*  COTAHIST_D25062021.TXT Trailer 7520
     * /Volumes/SSD_LEXAR/guilherme_folder/Developer/Java/Bovespa/spring_batch_cotahist/files/COTAHIST_D25062021_NO_HEADER_NO_TRAILER.TXT
     */
    @Override
@@ -35,7 +37,12 @@ public class BatchRunner implements CommandLineRunner{
       
       List<String> files = getFiles(args);
       for (String file : files) {
-         cotahistService.startImportCotahistFile(file);
+         
+         Long trailerToSkip = Files.lines(Paths.get(file)).count();
+         log.info("Trailer:{}", trailerToSkip);
+         
+         if ("A".equals("B"))
+            cotahistService.startImportCotahistFile(file, trailerToSkip);
       }
       
       sw.stop();
