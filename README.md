@@ -118,7 +118,7 @@ public class LineSetHeaderIdProcessor implements ItemProcessor<Line, Line> {
 }
 ```
 
-Future Step
+* Future Step
 
 ```java
 public class LineSetHeaderIdProcessor implements ItemProcessor<Line, Line> {
@@ -139,8 +139,12 @@ public class LineSetHeaderIdProcessor implements ItemProcessor<Line, Line> {
 }
 ```
 
-The important thing is to remember that exists two ExecutionContext. One is for Step and another is for the Job.   
+The important thing is to remember that exists two **ExecutionContext**.    
+
+> One is for Step and another is for the Job.   
+
 You have to get from _JobExecution_ when the data was stored at any step before that is running now.   
+
 You have to get from _StepExecution_ when the data was stored in the same Step. Does not matter if was stored on Reader and you need to get on the Process or Writer.    
 
 
