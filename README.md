@@ -49,7 +49,7 @@ The way to configure ExecutionContextPromotionListener is inform as listener on 
   public Step stepHeaderProcess() {
     return this.stepsFactory.get("stepHeaderProcess")
         .tasklet(headerTasklet(STRING_OVERRIDDEN_BY_EXPRESSION))
-        .listener(promotionListener()) 
+        .listener(promotionListener())
         .build();
   }
 ```
@@ -77,7 +77,7 @@ private String header;
 * Reader and Writer Step
 
 ```java
-public class EdgeIdAndEnterpriseIdReader implements ItemReader<SomeDTO> {
+public class HeaderReader implements ItemReader<SomeDTO> {
 
 StepExecution stepExecution;
 
