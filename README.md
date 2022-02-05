@@ -112,7 +112,7 @@ public class LineSetHeaderIdProcessor implements ItemProcessor<Line, Line> {
   @BeforeStep
   public void retrieveInterstepData(StepExecution stepExecution) {
     //Same Step recover
-    this.headerId = 	 stepExecution.getExecutionContext().getLong(CotahistCfg.HEADER_ID_PROMOTION);
+    this.headerId = stepExecution.getExecutionContext().getLong(CotahistCfg.HEADER_ID_PROMOTION);
     
   }
 }
