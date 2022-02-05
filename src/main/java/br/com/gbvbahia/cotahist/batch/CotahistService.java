@@ -14,16 +14,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CotahistService {
 
-   private final JobLauncher jobLauncher;
+  private final JobLauncher jobLauncher;
 
-   private final Job cotahistJob;
-   
-   public JobExecution startImportCotahistFile(JobParameters jobParameters) throws Exception {
-      
-      log.info("Receive request to start cotahistJob to file: {}", jobParameters);
-      
-      JobExecution execution = jobLauncher.run(cotahistJob, jobParameters);
-      return execution;
-   }
-   
+  private final Job cotahistJob;
+
+  public JobExecution startImportCotahistFile(JobParameters jobParameters) throws Exception {
+
+    log.info("Receive request to start cotahistJob to file: {}", jobParameters);
+
+    JobExecution execution = jobLauncher.run(cotahistJob, jobParameters);
+    
+    log.info("Execution Exit Status: {}", execution.getExitStatus().getExitCode());
+    return execution;
+  }
+
 }

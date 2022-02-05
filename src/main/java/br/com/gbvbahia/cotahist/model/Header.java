@@ -1,5 +1,6 @@
 package br.com.gbvbahia.cotahist.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -12,21 +13,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-@EqualsAndHashCode(of = { "nomeArquivo" })
-public class Header {
+@EqualsAndHashCode(of = {"nomeArquivo"})
+public class Header implements Serializable {
 
-   private Long id;
+  private static final long serialVersionUID = 1L;
 
-   // @FileMap(order = 1, start = 1, length = 2)
-   private int tipoRegistro;
+  private Long id;
 
-   // @FileMap(order = 2, start = 3, length = 13)
-   private String nomeArquivo;
+  // @FileMap(order = 1, start = 1, length = 2)
+  private int tipoRegistro;
 
-   // @FileMap(order = 3, start = 16, length = 8)
-   private String codigoOrigem;
+  // @FileMap(order = 2, start = 3, length = 13)
+  private String nomeArquivo;
 
-   // @FileMap(order = 4, start = 24, length = 8)
-   private Date dataGeracaoArquivo;
+  // @FileMap(order = 3, start = 16, length = 8)
+  private String codigoOrigem;
+
+  // @FileMap(order = 4, start = 24, length = 8)
+  private Date dataGeracaoArquivo;
 
 }

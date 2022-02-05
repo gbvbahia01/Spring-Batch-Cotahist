@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://192.168.15.177:5432/batch
+    username: pi
+    password: bvb123
+
+logging:
+  level:
+    root: WARN
+    '[org.springframework.web]': WARN
+    '[br.com.gbvbahia.cotahist]': DEBUG

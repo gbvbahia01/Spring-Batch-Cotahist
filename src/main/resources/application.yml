@@ -6,9 +6,9 @@ info:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.15.177:5432/batch
-    username: pi
-    password: bvb123
+    url: #By profile
+    username: #By profile
+    password: #By profile
   jpa:
     hibernate:
       ddl-auto: validate
@@ -20,21 +20,15 @@ spring:
     properties:
       hibernate:
         temp:
-          use_jdbc_metadata_defaults: false
+          '[use_jdbc_metadata_defaults]': false
   batch:
-    initialize-schema: ALWAYS
     job:
       enabled: false
+    jdbc:
+      initialize-schema: ALWAYS
+  flyway:
+    baselineOnMigrate: true
 
-
-batch:
-  jdbc:
-    driver: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.15.177:5432/batch
-    user: pi
-    password: bvb123
-    validationQuery: SELECT 1
-    testOnBorrow: true
     
 app:
   line:
@@ -45,3 +39,6 @@ app:
   header:
     query:
       insert: INSERT INTO cotahist_header (id, cod_ori, dat_ger, nom_arq, tip_reg) VALUES(nextval('seq_cotahist_header'), :codigoOrigem, :dataGeracaoArquivo, :nomeArquivo, :tipoRegistro)  
+  trailer:
+    query:
+      insert: INSERT INTO cotahist_trailer (id, cod_org, dat_ger, nom_arq, tip_reg, tot_reg, header_id) VALUES(nextval('seq_cotahist_trailer'), :codigoOrigem, :dataGeracaoArquivo, :nomeArquivo, :tipoRegistro, :totalRegistros, :headerId)

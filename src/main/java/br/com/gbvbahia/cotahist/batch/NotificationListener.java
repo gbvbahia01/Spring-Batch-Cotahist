@@ -9,18 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class NotificationListener implements JobExecutionListener {
-   
-   @Override
-   public void beforeJob(JobExecution jobExecution) {
-      log.info("Job:{} START", jobExecution.getJobConfigurationName());
 
-   }
+  @Override
+  public void beforeJob(JobExecution jobExecution) {
+    log.debug("Job:{} START", jobExecution.getJobInstance().getJobName());
 
-   @Override
-   public void afterJob(JobExecution jobExecution) {
-      log.info("Job:{} FINISHED: {}-{}", jobExecution.getJobConfigurationName(),
-                                         jobExecution.getExitStatus().getExitCode(),
-                                         jobExecution.getExitStatus().getExitDescription());
-   }
+  }
+
+  @Override
+  public void afterJob(JobExecution jobExecution) {
+    log.debug("Job:{} FINISHED: {}", jobExecution.getJobInstance().getJobName(),
+        jobExecution.getExitStatus().getExitCode());
+  }
 
 }
