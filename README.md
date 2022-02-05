@@ -27,7 +27,7 @@ Most Spring Batch jobs have more than one step. And some times you need to pass 
 The possibilities of needs are huge. Fortunately Spring Batch has a mechanism to do that.   
 I am written this to make easy to understand how to save and where to recover those values.
 
-To be any data available to next steps is necessary to give a promotion listener on Step that will insert the values on Step Execution Context. To do do this is necessary to create a ExecutionContextPromotionListener bean like this:
+To be any data available to next steps is necessary to give a promotion listener on Step that will insert the values on Step Execution Context. To do this is necessary to create a ExecutionContextPromotionListener bean like this:
 
 ```java
   @Bean
