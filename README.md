@@ -7,7 +7,7 @@
 More information about this file visit: [Bovespa Cotações Históricas](https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/cotacoes-historicas/)
 
 #### Eclipse [Code Formatter](https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml)   
-The formatter style is in folder src/main/resources/google_styleguide.xml.   
+> The formatter style is in folder src/main/resources/google_styleguide.xml.   
 To import: _preferences/Java/Code Style/Formatter/Import..._   
 
 
