@@ -14,7 +14,7 @@ To import: _preferences/Java/Code Style/Formatter/Import..._
 
 
 #### Java execution example:   
-java -jar -Dspring.profiles.active=dev cotahist-1.0.0.jar "/folder/to/get/B3/COTAHIST_D04022022.TXT"
+java -jar -Dspring.profiles.active=dev cotahist-1.0.0.jar "/folder/to/get/B3/COTAHIST_D04022022.TXT" "/folder/to/get/B3/COTAHIST_D03022022.TXT" 
 
 ### This application is a example how to pass and get small parameters between Spring Batch Steps.
 
