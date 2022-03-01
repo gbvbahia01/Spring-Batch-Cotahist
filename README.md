@@ -40,9 +40,9 @@ To have any data available for next steps, it is necessary to give a promotion l
   }
 ```
 
-When a step ends and has defined an ExecutionContextPromotionListener, any data inserted on the step execution context, where the key is in the listener keys array, will be stored in the job execution context.
-This is important to get **only at the end**.
-If you store a variable on Reader and need to get on Writer or Processor at the same Step, the data will not be available at the Job Execution Context, but will be available at the Step Execution Context.
+When a step ends and has defined an ExecutionContextPromotionListener, any data inserted on the step execution context, where the key is in the listener keys array, will be stored in the job execution context.   
+This is important to get: **only at the end**.   
+If you store a variable on Reader and need to get on Writer or Processor at the same Step, the data will not be available at the Job Execution Context, but will be available at the Step Execution Context.   
 Only when the Step is finished will Spring Batch promote the values in the Job Execution Context.
 
 The way to configure ExecutionContextPromotionListener is informed as a listener on Step:
