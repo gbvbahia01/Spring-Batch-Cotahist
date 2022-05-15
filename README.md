@@ -18,16 +18,16 @@ java -jar -Dspring.profiles.active=dev cotahist-1.0.0.jar "/folder/to/get/B3/COT
 
 ### This application is an example of how to pass and get small parameters between Spring Batch Steps.
 
-Most Spring Batch jobs have more than one step. And sometimes you need to pass some parameters between then and now, like:
+Most Spring Batch jobs have more than one step. And sometimes you need to save and recover some parameters between then, like:
 
 	- A JWT token to be used in header requests on some processes.     
 	- A row ID that will be used as a foreign key.   
 	- The number of rows in a file.   
 
-The possibilities of need are huge. Fortunately, Spring Batch has a mechanism to do that.   
+The possibilities for need are enormous.Fortunately, Spring Batch has a mechanism to do that.   
 I wrote this to make it easy to understand how to save and where to recover those values.
 
-To have any data available for next steps, it is necessary to give a promotion listener on step that will insert the values on step execution context. To do this, it is necessary to create an ExecutionContextPromotionListener bean like this:
+To have any data available for next steps, it is necessary to give a promotion listener on step that will insert the values in the step execution context. To do this, it is necessary to create an ExecutionContextPromotionListener bean like this:
 
 ```java
   @Bean
