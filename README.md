@@ -70,7 +70,7 @@ private String header;
 
 
     ExecutionContext executionContext = contribution.getStepExecution().getExecutionContext();
-    executionContext(HEADER_ID_PROMOTION, header);
+    executionContext.put(HEADER_ID_PROMOTION, header);
 
     return RepeatStatus.FINISHED;
   }
@@ -87,7 +87,7 @@ StepExecution stepExecution;
  public SomeDTO read() throws Exception {
 
     ExecutionContext executionContext = stepExecution.getExecutionContext();
-    executionContext(HEADER_ID_PROMOTION, header);
+    executionContext.put(HEADER_ID_PROMOTION, header);
     
     return new SomeDTO();
   }
