@@ -25,11 +25,6 @@ public class BatchRunner implements CommandLineRunner {
 
   private final CotahistService cotahistService;
 
-  /*
-   * COTAHIST_D25062021.TXT Trailer 7520
-   * /Volumes/SSD_LEXAR/guilherme_folder/Developer/Java/Bovespa/spring_batch_cotahist/files/
-   * COTAHIST_D25062021_NO_HEADER_NO_TRAILER.TXT
-   */
   @Override
   public void run(String... args) throws Exception {
     log.info("Main request received:{}", String.join(", ", args));
